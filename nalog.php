@@ -46,7 +46,7 @@ if (!isset($_SESSION['username'])) {
                   <li><a href="recepti2.php">RECEPTI</a></li>
                   <li><a href="kontakt2.php">INFO</a></li>
                   <li><a href="nalog.php">NALOG</a></li>
-                  <li><a href="recipe-form-section.php">VAŠI RECEPTI</a></li>
+                  <li><a href="kreator-recepata.php">VAŠI RECEPTI</a></li>
 
               </ul>
           </nav>
