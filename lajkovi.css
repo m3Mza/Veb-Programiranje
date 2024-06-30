@@ -1,0 +1,51 @@
+/* ====================================================================================================
+
+  Tabelica za lajkove
+
+  ========================================================================================================= */
+
+
+  .recepti-ranglista {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.recepti-tabela-rang {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+.recepti-tabela-rang th, .recepti-tabela-rang td {
+    padding: 12px;
+    border: 1px solid #ccc;
+}
+
+.recepti-tabela-rang th {
+    background-color: #25242b;
+    color: #f5efd7;
+    text-align: center;
+}
+
+.recepti-tabela-rang td {
+    background-color: #f5efd7;
+    color: #25242b;
+    text-align: center;
+}
+
+.recepti-tabela-rang tr:nth-child(even) td {
+    background-color: #e1e1e1;
+}
+
+.recepti-tabela-rang tr:hover td {
+    background-color: #898578;
+    color: #f5efd7;
+}

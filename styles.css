@@ -1,0 +1,547 @@
+@font-face {
+    font-family: 'Ubuntu';
+    src: url('/Users/mirkopopovic/Documents/fontovi za sajtove/Ubuntu/Ubuntu-Regular.ttf') format('truetype');
+}
+
+
+  
+  h1 {
+    font-size: 300%;
+  }
+
+  h2 {
+    font-size: 220%;
+    font-weight: bold;
+    margin-left: 10%;
+  }
+
+  h3 {
+    font-weight: 400;
+  }
+
+  hr {
+    color: #25242b;
+    margin-top: 2%;
+    margin-bottom: 2%;
+  }
+  
+  body {
+      background: #f5efd7;
+      color: #25242b;
+      font-family: 'Ubuntu', sans-serif;
+      position: relative;
+    }
+    
+  
+    
+    main {
+      background: #f5efd7;
+      border-bottom: 1px solid rgba(0, 0, 0, .2);
+      padding: 10vh 0;
+      position: relative;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .separator {
+      width: 70%;
+    margin: 0 auto;
+    border: none; 
+    border-top: 1px solid #25242b;
+  }
+
+  /* ====================================================================================================
+
+  HEADER
+
+  ========================================================================================================= */
+
+    header {
+        color: #f5efd7; 
+        padding-top: 10vw;
+        padding-bottom: 30vw;
+        text-align: center;
+      }
+
+      .fiksirani-meni {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: #25242b;
+        color: #f5efd7;
+        padding: 1em;
+        z-index: 999; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        opacity: 0;
+        transition: opacity 0.5s ease-in;
+        text-align: center;
+        
+    }
+    
+    .fiksirani-meni nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: inline-flex; 
+        justify-content: center; 
+    }
+    
+    .fiksirani-meni nav ul li {
+        margin-right: 1em;
+    }
+    
+    .fiksirani-meni nav ul li a {
+        color: #f5efd7;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .fiksirani-meni nav ul li a:hover {
+        color: #898578;
+    }
+
+    
+  /* ====================================================================================================
+
+  FOOTER
+
+  ========================================================================================================= */
+
+footer {
+  padding: 5vh 0;
+  background-color: #25242b;
+  color: #f5efd7;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-logo img {
+  height: 25vh;
+  width: auto;
+}
+
+
+.footer-linkovi {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.footer-linkovi a {
+  color: #f5efd7;
+  text-decoration: none;
+  margin: 0.2em 0;
+  transition: color 0.3s ease;
+}
+
+.footer-linkovi a:hover {
+  color: #898578;
+}
+
+.footer-info {
+  text-align: right;
+}
+
+.footer-info small {
+  display: block;
+  opacity: .5;
+  font-weight: 300;
+  margin-bottom: 0.5em;
+}
+
+.footer-info p {
+  margin: 0.2em 0;
+}
+
+.footer-info a {
+  color: #f5efd7;
+  text-decoration: none;
+}
+
+.footer-info a:hover {
+  text-decoration: underline;
+}
+
+
+
+  /* ====================================================================================================
+
+  GORNJI DEO STRANICE KOJI SE POMERA - SVG ANIMACIJA
+
+  ========================================================================================================= */
+
+*, *:after, *:before {
+  margin: 0;
+  padding: 0;
+}
+
+.svg-kontejner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: -1;
+  }
+  
+
+svg {
+    path {
+      fill: #25242b;
+      transition: .1s;
+    }
+  
+    &:hover path {
+      d: path("M 800 300 Q 400 250 0 300 L 0 0 L 800 0 L 800 300 Z");
+    }
+  }
+  
+ 
+
+
+  /* ====================================================================================================
+
+  POCETNA
+
+  ========================================================================================================= */
+
+
+  /* Slajder veliki */
+
+  .slajder {
+    position: relative;
+    max-width: 80%;
+    margin: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .slajdovi {
+    display: flex;
+    transition: opacity 0.5s ease-in-out;
+    transition-property: opacity;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+  }
+  
+  .slajd {
+    display: none;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out; 
+  }
+  
+  .slajd.active {
+    opacity: 1;
+  }
+  
+  .slajd img {
+    width: 75%;
+    height: auto;
+    vertical-align: middle;
+    transition: transform 0.3s ease;
+  }
+  
+  .slajd img:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+  
+  .opis-blok {
+    background-color: #25242b;
+    color: #f5efd7;
+    padding: 20px;
+    width: 50%;
+    height: 94.4%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .slajd-sadrzaj {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .dugme-kontejner {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 16px;
+    color: #25242b;
+    font-weight: bold;
+    font-size: 18px;
+    background: #f5efd7;
+    cursor: pointer;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  
+  .next {
+    right: 10px;
+  }
+  
+  .prev {
+    left: 10px;
+  }
+  
+  .next:hover {
+    transform: translateX(10px);
+  }
+  
+  .next::after {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  
+  .next:hover::after {
+    transform: translateX(5px);
+  }
+  
+  .next:hover .next-text {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .next-text {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 3px;
+    color: #25242b;
+    font-weight: bold;
+    font-size: 14px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  /* Iskustva autora */
+
+  .tri-kolumne {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: #25242b;
+}
+
+.iskustva-kolumna {
+    flex: 1;
+    margin: 0 10px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.iskustva-kolumna img {
+    width: 100%;
+    max-height: 716px;
+    transition: transform 0.4s ease-in-out;
+}
+
+.iskustva-kolumna :hover {
+    transform: scale(1.1);
+}
+
+.iskustva-kolumna h3 {
+    margin: 10px 0;
+    font-size: 2rem;
+}
+
+.iskustva-kolumna p {
+    font-size: 1,5rem;
+    margin: 10px 0;
+}
+  
+  /* ====================================================================================================
+
+  KONTAKT
+
+  ========================================================================================================= */
+
+
+/* O meni sekcija */
+
+.kontejner-bio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 800px;
+  margin: 20px auto;
+  padding-bottom: 20px;
+}
+
+.leva-kolumna {
+  flex: 1;
+  padding: 20px;
+  text-align: right;
+}
+
+.desna-kolumna {
+  flex: 1;
+  padding: 20px;
+  text-align: left;
+}
+
+.bio-header {
+  font-size: 32px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.struke-header {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+  font-style: italic;
+  text-align: left;
+}
+
+.bio-tekst {
+  font-size: 16px;
+  color: #666;
+  text-align: justify;
+}
+
+.mirko {
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-right: 20px; 
+}
+
+
+
+/* Lista alata i jezika */
+
+ul {
+  list-style-type: none;
+  padding: 10%;
+  text-align: left;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+.alati-i-jezici-kontejner {
+  display: flex;
+  justify-content: left;
+  align-items: flex-start;
+  gap: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.kolumna-alati-i-jezici {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  color: #25242b;
+}
+
+
+  /* ====================================================================================================
+
+  RECEPTI
+
+  ========================================================================================================= */
+
+
+  .galerija {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .galerija-slika {
+    position: relative;
+    overflow: hidden; 
+  }
+  
+  .galerija-slika img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease; 
+  }
+  
+  .mala img {
+    transform: scale(0.5);
+  }
+  
+  .srednja img {
+    transform: scale(0.55); 
+  }
+
+  .default img {
+    transform: scale(0.6);
+  }
+
+  .velika img {
+    transform: scale(0.65);
+  }
+  
+  
+  .galerija-slika:hover img {
+    transform: scale(0.7); 
+  }
+  
+  .ime-kategorije {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    font-size: larger;
+    color: #25242b;
+    padding: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .galerija-slika:hover .ime-kategorije {
+    opacity: 1;
+  }
+  
+  .tilt-levo {
+    transform: rotate(-5deg);
+}
+
+.tilt-desno {
+    transform: rotate(5deg);
+}
+
+
+

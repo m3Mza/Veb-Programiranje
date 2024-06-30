@@ -1,0 +1,61 @@
+  /* ====================================================================================================
+
+  REGISTRACIJA
+
+  ========================================================================================================= */
+
+.forma-kontejner {
+    padding: 50px;
+    width: 300px;
+    border: solid 1px #25242b;
+}
+
+
+.forma-grupa {
+    margin-bottom: 1em;
+}
+
+.forma-grupa label {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.5em;
+    color: #666;
+}
+
+.forma-grupa input[type="text"],
+.forma-grupa input[type="email"],
+.forma-grupa input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.forma-grupa input[type="submit"] {
+    background-color: #25242b;
+    color: #f5efd7;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1em;
+    width: 100%;
+}
+
+.forma-grupa input[type="submit"]:hover {
+    background-color: #898578;
+    color: #25242b;
+}
+
+
+.gazda-kontejner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+
+
+

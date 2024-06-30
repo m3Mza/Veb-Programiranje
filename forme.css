@@ -1,0 +1,274 @@
+  /* ====================================================================================================
+
+  Kreator recepata
+
+  ========================================================================================================= */
+
+.recipe-form-section {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-form-section form {
+    display: flex;
+    flex-direction: column;
+}
+
+.recipe-form-section form label {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #25242b;
+}
+
+.recipe-form-section form input[type="text"],
+.recipe-form-section form textarea,
+.recipe-form-section form select {
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.recipe-form-section form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.recipe-form-section form div {
+    margin-top: 10px;
+}
+
+.recipe-form-section form button {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #25242b;
+    color: #f5efd7;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.recipe-form-section form button:hover {
+    background-color: #898578;
+}
+
+.recipe-form-section form div input[type="radio"] {
+    margin-right: 5px;
+}
+
+.recipe-form-section form div label {
+    margin-right: 15px;
+}
+
+  /* ====================================================================================================
+
+  Pretraga recepata
+
+  ========================================================================================================= */
+
+  .search-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #25242b;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-container form input[type="text"] {
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-container form label {
+    margin-top: 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    color: #f5efd7;
+}
+
+.search-container form label input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.search-container form button {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #f5efd7;
+    color: #25242b;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-container form button:hover {
+    background-color: #898578;
+    color: #f5efd7;
+}
+
+.search-container form .clear-button {
+    margin-top: 10px;
+    background-color: #f5efd7;
+    color: #25242b;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-container form .clear-button:hover {
+    background-color: #898578;
+    color: #25242b;
+
+}
+
+  /* ====================================================================================================
+
+  Nalog forma, menjanje lozinke, brisanje...
+
+  ========================================================================================================= */
+
+
+.nalog-sekcija {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+}
+
+.info-predmet {
+    margin-bottom: 20px;
+}
+
+.info-predmet label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #25242b;
+}
+
+.info-predmet input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.info-predmet span {
+    font-size: 16px;
+    color: #25242b;
+}
+
+.promeni-dugme {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #25242b;
+    color: #f5efd7;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.promeni-dugme:hover {
+    background-color: #898578;
+}
+
+.profilna-slika {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 75%;
+}
+
+.slicica-nalog-stranica {
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+  /* ====================================================================================================
+
+  Dinamicka stranica za recepte
+
+  ========================================================================================================= */
+
+
+
+  .brzi-recept-sekcija {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f5efd7;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.brzi-recept-detalji {
+    margin-bottom: 20px;
+}
+
+.brzi-recept-detalji h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #25242b;
+    margin-bottom: 10px; 
+}
+
+.brzi-recept-opis {
+    font-size: 16px;
+    color: #25242b;
+    margin-bottom: 10px;
+}
+
+.brzi-recept-instrukcije {
+    font-size: 16px;
+    color: #25242b;
+}
+
+.brzi-recept-instrukcije h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #25242b;
+    margin-bottom: 10px;
+}
+
+.brzi-recept-instrukcije p {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+
