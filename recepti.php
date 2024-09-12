@@ -46,79 +46,147 @@
 
   ========================================================================================================= -->
 
-<h2 style="text-align: left; margin-left: 15%;">Daj nešto nabrzaka!</h2>
-    <br><br>
-    <hr class="separator">
-    <br><br>
+  <h2 style="text-align: left; margin-left: 15%;">Daj nešto nabrzaka!</h2>
+<br><br>
+<hr class="separator">
+<br><br>
 
-    <div class="search-container">
-        <form method="GET" action="recepti.php">
-            <input type="text" name="search" placeholder="Pretraži recepte...">
-            <label>
-                <input type="checkbox" name="vegan"> Vegan
-            </label>
-            <label>
-                <input type="checkbox" name="vegeterijanac"> Vegeterijanac
-            </label>
-            <label>
-                <input type="checkbox" name="sve"> Sve
-            </label>
-            <button type="submit">Pretraga</button>
-            <button type="button" class="clear-button" onclick="clearResults()">Očisti rezultate</button>
-        </form>
-    </div>
+<div class="search-container">
+    <form method="GET" action="recepti.php">
+        <input type="text" name="search" placeholder="Pretraži recepte...">
 
-     <!-- php povezuje se sa bazom da prikaze rezultate -->
+        <label>
+            <input type="checkbox" name="vegan"> Vegan
+        </label>
+        <label>
+            <input type="checkbox" name="vegeterijanac"> Vegeterijanac
+        </label>
+        <label>
+            <input type="checkbox" name="sve"> Sve
+        </label>
 
-    <div id="searchResults">
-        <?php
+        <!-- Dropdown lista za kategorije -->
+        <label for="kategorija">Izaberi kategoriju:</label>
+        <select name="kategorija" id="kategorija">
+            <option value="">Sve kategorije</option>
+            <option value="Meso">Meso</option>
+            <option value="Dezerti">Dezerti</option>
+            <option value="Pasta">Pasta</option>
+            <option value="Testo">Testo</option>
+            <option value="Piće">Piće</option>
+            <option value="Riba">Riba</option>
+            <option value="Salate">Salate</option>
+            <option value="Grickalice">Grickalice</option>
+            <option value="Sosevi">Sosevi</option>
+            <option value="Kuvano">Kuvano</option>
+        </select>
 
-        $servername = "localhost";
-        $username = "root";
-        $password = "root";
-        $dbname = "sajt_baza";
+        <button type="submit">Pretraga</button>
+        <button type="button" class="clear-button" onclick="clearResults()">Očisti rezultate</button>
+    </form>
+</div>
 
-        $conn = new mysqli($servername, $username, $password, $dbname);
+<!-- PHP povezuje se sa bazom da prikaze rezultate -->
 
-        if ($conn->connect_error) {
-            die("Veza neuspesna: " . $conn->connect_error);
+<div id="searchResults">
+    <?php
+    // Klasa za rad sa bazom podataka
+    class BazaPodataka {
+        private $conn;
+
+        public function __construct($servername, $username, $password, $dbname) {
+            $this->conn = new mysqli($servername, $username, $password, $dbname);
+            if ($this->conn->connect_error) {
+                die("Veza neuspesna: " . $this->conn->connect_error);
+            }
         }
 
-        if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search'])) {
-            $searchTerm = $_GET['search'];
+        public function getConnection() {
+            return $this->conn;
+        }
 
-            $sql = "SELECT * FROM recepti WHERE ime LIKE '%" . $conn->real_escape_string($searchTerm) . "%'";
+        public function __destruct() {
+            $this->conn->close();
+        }
+    }
 
-            // Filterisanje
-            if (isset($_GET['vegan'])) {
+    // Klasa za pretragu recepata
+    class PretragaRecepata {
+        private $db;
+
+        public function __construct($db) {
+            $this->db = $db;
+        }
+
+        public function pretraziRecepte($searchTerm, $filter, $kategorija) {
+            $conn = $this->db->getConnection();
+            $sql = "SELECT * FROM recepti WHERE ime LIKE ?";
+            $params = ["%$searchTerm%"];
+            $types = "s";
+
+            if ($filter === 'Vegan') {
                 $sql .= " AND dijeta = 'Vegan'";
-            } elseif (isset($_GET['vegeterijanac'])) {
+            } elseif ($filter === 'Vegeterijanac') {
                 $sql .= " AND dijeta = 'Vegeterijanac'";
-            } elseif (isset($_GET['sve'])) {
-                
             }
 
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
-                echo "<div class='search-results'>";
-                while ($row = $result->fetch_assoc()) {
-                   echo "<a href='#' class='recipe-link' data-ime='" . htmlspecialchars($row['ime']) . "' data-opis='" . htmlspecialchars($row['opis']) . "' data-instrukcije='" . htmlspecialchars($row['instrukcije']) . "'>";
-                    echo "<h3>" . htmlspecialchars($row['ime']) . "</h3>";
-                      echo "</a>";
-
-                }
-                echo "</div>";
-            } else {
-                echo "<p>Nema rezultata za upit: " . htmlspecialchars($searchTerm) . "</p>";
+            // Filtriranje po kategoriji
+            if (!empty($kategorija)) {
+                $sql .= " AND kategorija = ?";
+                $params[] = $kategorija;
+                $types .= "s"; // dodajemo još jedan string tip
             }
 
-            $result->free_result();
+            $stmt = $conn->prepare($sql);
+            if ($stmt === false) {
+                die("Greška sa pripremom upita: " . $conn->error);
+            }
+
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            return $stmt->get_result();
+        }
+    }
+
+    // Povezivanje sa bazom
+    $baza = new BazaPodataka("localhost", "root", "root", "sajt_baza");
+    $pretraga = new PretragaRecepata($baza);
+
+    if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search'])) {
+        $searchTerm = $_GET['search'];
+
+        // Filtriranje na osnovu dijetalnih restrikcija
+        $filter = "";
+        if (isset($_GET['vegan'])) {
+            $filter = 'Vegan';
+        } elseif (isset($_GET['vegeterijanac'])) {
+            $filter = 'Vegeterijanac';
+        } elseif (isset($_GET['sve'])) {
+            $filter = 'Sve';
         }
 
-        $conn->close();
-        ?>
-    </div>
+        // Uzmi kategoriju iz GET zahteva
+        $kategorija = $_GET['kategorija'] ?? '';
+
+        // Pretraga recepata
+        $result = $pretraga->pretraziRecepte($searchTerm, $filter, $kategorija);
+
+        if ($result->num_rows > 0) {
+            echo "<div class='search-results'>";
+            while ($row = $result->fetch_assoc()) {
+                echo "<a href='#' class='recipe-link' data-ime='" . htmlspecialchars($row['ime']) . "' data-opis='" . htmlspecialchars($row['opis']) . "' data-instrukcije='" . htmlspecialchars($row['instrukcije']) . "'>";
+                echo "<h3>" . htmlspecialchars($row['ime']) . "</h3>";
+                echo "</a>";
+            }
+            echo "</div>";
+        } else {
+            echo "<p>Nema rezultata za upit: " . htmlspecialchars($searchTerm) . "</p>";
+        }
+    }
+    ?>
+</div>
+
+
 
 <!-- js skripte za ciscenje rezultata i js koji prikazuje stranicu kao dinamicku pop-up stranicu -->
 
@@ -143,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function openRecipePopup(ime, opis, instrukcije) {
-        var url = 'dinamicka-stranica-odjavljen.php';
+        var url = 'dinamicka-stranica.php';
         url += '?ime=' + encodeURIComponent(ime);
         url += '&opis=' + encodeURIComponent(opis);
         url += '&instrukcije=' + encodeURIComponent(instrukcije);
@@ -158,59 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <br><br><br><br> <hr class="separator">
 
-<!-- ====================================================================================================
-
-Rang lista recepata
-
-========================================================================================================= -->
-
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "sajt_baza";
-
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
- die("Veza neuspesna: " . $conn->connect_error);
-}
-
-// Uzima recepte po ocenama top 10 lista
-$sql = "SELECT recept_ime, lajk FROM recenzije ORDER BY lajk DESC LIMIT 10";
-$result = $conn->query($sql);
-
-
-$conn->close();
-?>
-
-<br>
-<section class="recepti-ranglista">
-<h2 style="text-align: left; margin-left: 15%;">Top recepti</h2>
- <br><br>
-
- <?php
- if ($result->num_rows > 0) {
-     echo '<table class="recepti-tabela-rang">';
-     echo '<thead><tr><th>Recept Ime</th><th>Lajkova</th></tr></thead>';
-     echo '<tbody>';
-     while ($row = $result->fetch_assoc()) {
-         echo '<tr>';
-         echo '<td>' . htmlspecialchars($row['recept_ime']) . '</td>';
-         echo '<td>' . htmlspecialchars($row['lajk']) . '</td>';
-         echo '</tr>';
-     }
-     echo '</tbody>';
-     echo '</table>';
- } else {
-     echo "Nema podataka o receptima.";
- }
- ?>
-</section>
-
-
-   <br><br><br><br> <hr class="separator">
 
 
  <!-- ====================================================================================================

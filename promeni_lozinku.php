@@ -6,32 +6,49 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "sajt_baza";
+class BazaPodataka {
+    private $servername = "localhost";
+    private $username = "root";
+    private $password = "root";
+    private $dbname = "sajt_baza";
+    protected $conn;
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+    public function __construct() {
+        $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+        if ($this->conn->connect_error) {
+            die("Veza neuspešna: " . $this->conn->connect_error);
+        }
+    }
 
-if ($conn->connect_error) {
-    die("Veza neuspešna: " . $conn->connect_error);
+    public function close() {
+        $this->conn->close();
+    }
+}
+
+class Korisnik extends BazaPodataka {
+    public function changePassword($username, $newPassword) {
+        // Ažuriraj lozinku u bazi
+        $stmt = $this->conn->prepare("UPDATE korisnici SET lozinka = ? WHERE korisnicko_ime = ?");
+        $stmt->bind_param("ss", $newPassword, $username);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 $username = $_SESSION['username'];
-$current_password = $_POST['current_password'];
 $new_password = $_POST['new_password'];
 
+$korisnik = new Korisnik();
 
-$stmt = $conn->prepare("UPDATE korisnici SET lozinka = ? WHERE korisnicko_ime = ?");
-$stmt->bind_param("ss", $new_password, $username);
-
-if ($stmt->execute()) {
+if ($korisnik->changePassword($username, $new_password)) {
     echo '<script>alert("Lozinka je uspešno promenjena."); window.location.href = "nalog.php";</script>';
-    exit();
 } else {
-    echo "Greška pri menjanju lozinke: " . $conn->error;
+    echo "Greška pri menjanju lozinke: " . $korisnik->conn->error;
 }
 
-$stmt->close();
-$conn->close();
+$korisnik->close();
 ?>

@@ -543,5 +543,21 @@ li {
     transform: rotate(5deg);
 }
 
+.dugme-stampa {
+  margin-top: 20px;
+}
+
+.dugme-stampa button {
+  background-color: #25242b; 
+  color: #f5efd7; 
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.dugme-stampa button:hover {
+  background-color: #898578;
+}
+
 
 

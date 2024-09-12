@@ -52,27 +52,28 @@
   ========================================================================================================= -->
 
 
-    <div class="gazda-kontejner">
-      <div class="forma-kontejner">
-          <form action="login.php" method="POST">
-              <div class="forma-grupa">
-                  <label for="username">Korisničko ime:</label>
-                  <input type="text" id="username" name="username" required>
-              </div>
-              <div class="forma-grupa">
-                  <label for="password">Lozinka:</label>
-                  <input type="password" id="password" name="password" required>
-              </div>
-              <div class="forma-grupa">
-                  <input type="submit" value="Uloguj se">
-              </div>
-          </form>
-          <div class="forma-grupa">
-              <a href="kreiraj-nalog.html">Nemaš nalog? Registruj se!</a>
-          </div>
-      </div>
-  </div>
-</main>
+  <div class="gazda-kontejner">
+    <div class="forma-kontejner">
+        <form action="login.php" method="POST">
+            <div class="forma-grupa">
+                <label for="username">Korisničko ime:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="forma-grupa lozinka-kontejner">
+                <label for="password">Lozinka:</label>
+                <input type="password" id="password" name="password" required>
+                <span class="toggle-lozinka" onclick="toggleLozinku('password')">👁️</span>
+            </div>
+            <div class="forma-grupa">
+                <input type="submit" value="Uloguj se" class="promeni-dugme">
+            </div>
+        </form>
+        <div class="forma-grupa">
+            <a href="kreiraj-nalog.html">Nemaš nalog? Registruj se!</a>
+        </div>
+    </div>
+</div>
+
 
 
 <footer>
@@ -101,6 +102,13 @@
 
   
 
-<script src="script.js"></script>    
+<script src="script.js"></script>
+<script>
+  function toggleLozinku(fieldId) {
+        const input = document.getElementById(fieldId);
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+    }
+</script>
 </body>
 </html>
