@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start the session
+session_start();
 
 // Provera da li je korisnik ulogovan
 if (!isset($_SESSION['username'])) {

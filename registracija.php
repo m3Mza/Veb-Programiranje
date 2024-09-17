@@ -19,15 +19,13 @@ class BazaPodataka {
     }
 }
 
-class Korisnik {
-    private $db;
-
-    public function __construct($db) {
-        $this->db = $db;
+class Korisnik extends BazaPodataka {
+    public function __construct($servername, $username, $password, $dbname) {
+        parent::__construct($servername, $username, $password, $dbname);
     }
 
     public function registrujKorisnika($korisnickoIme, $lozinka) {
-        $stmt = $this->db->getConnection()->prepare("CALL RegistracijaKorisnika(?, ?)");
+        $stmt = $this->getConnection()->prepare("CALL RegistracijaKorisnika(?, ?)");
 
         if ($stmt) {
             $stmt->bind_param("ss", $korisnickoIme, $lozinka);
@@ -41,7 +39,7 @@ class Korisnik {
 
             $stmt->close();
         } else {
-            echo "Greška: " . $this->db->getConnection()->error;
+            echo "Greška: " . $this->getConnection()->error;
         }
     }
 }
@@ -52,8 +50,7 @@ $username = "root";
 $password = "root"; 
 $dbname = "sajt_baza";
 
-$baza = new BazaPodataka($servername, $username, $password, $dbname);
-$korisnik = new Korisnik($baza);
+$korisnik = new Korisnik($servername, $username, $password, $dbname);
 
 // Pribavljanje podataka iz forme
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -64,3 +61,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $korisnik->registrujKorisnika($korisnicko_ime, $lozinka);
 }
 ?>
+

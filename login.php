@@ -7,7 +7,7 @@ $password = "root";
 $dbname = "sajt_baza";
 
 class BazaPodataka {
-    private $konekcija;
+    protected $konekcija;
 
     public function __construct($servername, $username, $password, $dbname) {
         $this->konekcija = new mysqli($servername, $username, $password, $dbname);
@@ -26,19 +26,18 @@ class BazaPodataka {
     }
 }
 
-class Autentifikator {
-    private $baza;
+class Autentifikator extends BazaPodataka {
     private $korisnickoIme;
     private $lozinka;
 
-    public function __construct($baza, $korisnickoIme, $lozinka) {
-        $this->baza = $baza;
+    public function __construct($servername, $username, $password, $dbname, $korisnickoIme, $lozinka) {
+        parent::__construct($servername, $username, $password, $dbname);
         $this->korisnickoIme = $korisnickoIme;
         $this->lozinka = $lozinka;
     }
 
     public function autentifikuj() {
-        $konekcija = $this->baza->dohvatiKonekciju();
+        $konekcija = $this->dohvatiKonekciju();
         $upit = $konekcija->prepare("SELECT lozinka FROM korisnici WHERE korisnicko_ime = ?");
         $upit->bind_param("s", $this->korisnickoIme);
         $upit->execute();
@@ -60,18 +59,20 @@ class Autentifikator {
         }
 
         $upit->close();
-        $this->baza->zatvoriKonekciju();
+        $this->zatvoriKonekciju();
     }
 }
 
-$baza = new BazaPodataka($servername, $username, $password, $dbname);
-
-// Provera da li je forma poslala podatke
+// Kreiranje instance autentifikatora
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $korisnickoIme = $_POST['username'];
     $lozinka = $_POST['password'];
 
-    $autentifikator = new Autentifikator($baza, $korisnickoIme, $lozinka);
+    // Kreiranje instance baze podataka
+    $baza = new BazaPodataka($servername, $username, $password, $dbname);
+    
+    // Kreiranje instance autentifikatora
+    $autentifikator = new Autentifikator($servername, $username, $password, $dbname, $korisnickoIme, $lozinka);
     $rezultat = $autentifikator->autentifikuj();
 
     if ($rezultat) {

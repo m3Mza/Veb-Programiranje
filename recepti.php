@@ -97,7 +97,7 @@
         public function __construct($servername, $username, $password, $dbname) {
             $this->conn = new mysqli($servername, $username, $password, $dbname);
             if ($this->conn->connect_error) {
-                die("Veza neuspesna: " . $this->conn->connect_error);
+                die("Veza neuspešna: " . $this->conn->connect_error);
             }
         }
 
@@ -110,16 +110,14 @@
         }
     }
 
-    // Klasa za pretragu recepata
-    class PretragaRecepata {
-        private $db;
-
-        public function __construct($db) {
-            $this->db = $db;
+    // Klasa za pretragu recepata koja nasledjuje BazaPodataka
+    class PretragaRecepata extends BazaPodataka {
+        public function __construct($servername, $username, $password, $dbname) {
+            parent::__construct($servername, $username, $password, $dbname);
         }
 
         public function pretraziRecepte($searchTerm, $filter, $kategorija) {
-            $conn = $this->db->getConnection();
+            $conn = $this->getConnection();
             $sql = "SELECT * FROM recepti WHERE ime LIKE ?";
             $params = ["%$searchTerm%"];
             $types = "s";
@@ -130,11 +128,10 @@
                 $sql .= " AND dijeta = 'Vegeterijanac'";
             }
 
-            // Filtriranje po kategoriji
             if (!empty($kategorija)) {
                 $sql .= " AND kategorija = ?";
                 $params[] = $kategorija;
-                $types .= "s"; // dodajemo još jedan string tip
+                $types .= "s";
             }
 
             $stmt = $conn->prepare($sql);
@@ -149,42 +146,42 @@
     }
 
     // Povezivanje sa bazom
-    $baza = new BazaPodataka("localhost", "root", "root", "sajt_baza");
-    $pretraga = new PretragaRecepata($baza);
+    $baza = new PretragaRecepata("localhost", "root", "root", "sajt_baza");
 
     if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search'])) {
         $searchTerm = $_GET['search'];
-
-        // Filtriranje na osnovu dijetalnih restrikcija
-        $filter = "";
-        if (isset($_GET['vegan'])) {
-            $filter = 'Vegan';
-        } elseif (isset($_GET['vegeterijanac'])) {
-            $filter = 'Vegeterijanac';
-        } elseif (isset($_GET['sve'])) {
-            $filter = 'Sve';
-        }
-
-        // Uzmi kategoriju iz GET zahteva
+        $filter = isset($_GET['vegan']) ? 'Vegan' : (isset($_GET['vegeterijanac']) ? 'Vegeterijanac' : 'Sve');
         $kategorija = $_GET['kategorija'] ?? '';
 
-        // Pretraga recepata
-        $result = $pretraga->pretraziRecepte($searchTerm, $filter, $kategorija);
+        $result = $baza->pretraziRecepte($searchTerm, $filter, $kategorija);
 
         if ($result->num_rows > 0) {
-            echo "<div class='search-results'>";
+            echo "<br><br>";
+            echo "<table border='1' cellpadding='5' cellspacing='0'>";
+            echo "<tr><th>Ime</th><th>Opis</th><th>Instrukcije</th><th>Dijetalna restrikcija</th><th>Kategorija</th><th>Štampaj recept</th></tr>";
+
             while ($row = $result->fetch_assoc()) {
-                echo "<a href='#' class='recipe-link' data-ime='" . htmlspecialchars($row['ime']) . "' data-opis='" . htmlspecialchars($row['opis']) . "' data-instrukcije='" . htmlspecialchars($row['instrukcije']) . "'>";
-                echo "<h3>" . htmlspecialchars($row['ime']) . "</h3>";
-                echo "</a>";
+                echo "<tr>";
+                echo "<td><a href='#' class='recipe-link' data-ime='" . htmlspecialchars($row['ime']) . "' data-opis='" . htmlspecialchars($row['opis']) . "' data-instrukcije='" . htmlspecialchars($row['instrukcije']) . "'>";
+                echo htmlspecialchars($row['ime']) . "</a></td>";
+                echo "<td>" . htmlspecialchars($row['opis']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['instrukcije']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['dijeta']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['kategorija']) . "</td>";
+                echo "<td><a href='printer-friendly.php?ime=" . urlencode($row['ime']) . "' target='_blank'>Štampaj</a></td>"; // Link za štampanje
+                echo "</tr>";
             }
-            echo "</div>";
+
+            echo "</table>";
         } else {
             echo "<p>Nema rezultata za upit: " . htmlspecialchars($searchTerm) . "</p>";
         }
     }
     ?>
 </div>
+
+
+
 
 
 
@@ -195,33 +192,6 @@
         function clearResults() {
             document.getElementById('searchResults').innerHTML = '';
         }
-
-    // JS za popup prozor
-document.addEventListener('DOMContentLoaded', function() {
-    var recipeLinks = document.querySelectorAll('.recipe-link');
-
-    recipeLinks.forEach(function(link) {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            var ime = this.getAttribute('data-ime');
-            var opis = this.getAttribute('data-opis');
-            var instrukcije = this.getAttribute('data-instrukcije');
-            openRecipePopup(ime, opis, instrukcije);
-        });
-    });
-
-    function openRecipePopup(ime, opis, instrukcije) {
-        var url = 'dinamicka-stranica.php';
-        url += '?ime=' + encodeURIComponent(ime);
-        url += '&opis=' + encodeURIComponent(opis);
-        url += '&instrukcije=' + encodeURIComponent(instrukcije);
-
-        
-        var popupWindow = window.open(url, "RecipePopup", "width=800,height=600");
-    }
-});
-
-
 </script>
 
 <br><br><br><br> <hr class="separator">
