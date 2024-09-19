@@ -118,7 +118,7 @@
 
         public function pretraziRecepte($searchTerm, $filter, $kategorija) {
             $conn = $this->getConnection();
-            $sql = "SELECT * FROM recepti WHERE ime LIKE ?";
+            $sql = "SELECT * FROM view_recepti WHERE ime LIKE ?";
             $params = ["%$searchTerm%"];
             $types = "s";
 
