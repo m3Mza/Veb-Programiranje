@@ -26,7 +26,7 @@ class BazaPodataka {
 }
 
 class Korisnik extends BazaPodataka {
-    public function changePassword($username, $newPassword) {
+    public function promeniLozinku($username, $newPassword) {
         // Ažuriraj lozinku u bazi
         $stmt = $this->conn->prepare("UPDATE korisnici SET lozinka = ? WHERE korisnicko_ime = ?");
         $stmt->bind_param("ss", $newPassword, $username);
@@ -44,7 +44,7 @@ $new_password = $_POST['new_password'];
 
 $korisnik = new Korisnik();
 
-if ($korisnik->changePassword($username, $new_password)) {
+if ($korisnik->promeniLozinku($username, $new_password)) {
     echo '<script>alert("Lozinka je uspešno promenjena."); window.location.href = "nalog.php";</script>';
 } else {
     echo "Greška pri menjanju lozinke: " . $korisnik->conn->error;

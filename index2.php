@@ -46,6 +46,8 @@ if (!isset($_SESSION['username'])) {
                   <li><a href="kontakt2.php">INFO</a></li>
                   <li><a href="nalog.php">NALOG</a></li>
                   <li><a href="kreator-recepata.php">VAŠI RECEPTI</a></li>
+                  <li><a href="KreatorBezProcedure.php">KREATOR BEZ PROCEDURE</a></li>
+                  
 
               </ul>
           </nav>
