@@ -43,12 +43,8 @@ if (!isset($_SESSION['username'])) {
               <ul>
                   <li><a href="index2.php">POČETNA</a></li>
                   <li><a href="recepti2.php">RECEPTI</a></li>
-                  <li><a href="kontakt2.php">INFO</a></li>
                   <li><a href="nalog.php">NALOG</a></li>
                   <li><a href="kreator-recepata.php">VAŠI RECEPTI</a></li>
-                  <li><a href="KreatorBezProcedure.php">KREATOR BEZ PROCEDURE</a></li>
-                  
-
               </ul>
           </nav>
       </section>
@@ -154,7 +150,6 @@ if (!isset($_SESSION['username'])) {
             <div class="footer-linkovi">
               <a href="index2.php">POČETNA</a>
               <a href="recepti2.php">RECEPTI</a>
-              <a href="kontakt2.php">INFO</a>
             </div>
           </div>
           <div class="footer-info">

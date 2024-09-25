@@ -34,7 +34,6 @@
               <ul>
                   <li><a href="index.php">POČETNA</a></li>
                   <li><a href="recepti.php">RECEPTI</a></li>
-                  <li><a href="kontakt.php">INFO</a></li>
                   <li><a href="login.html">PRIJAVA</a></li>
               </ul>
           </nav>
@@ -52,7 +51,7 @@
 <br><br>
 
 <div class="search-container">
-    <form method="GET" action="recepti.php">
+    <form method="GET" action="recepti2.php">
         <input type="text" name="search" placeholder="Pretraži recepte...">
 
         <label>
@@ -69,16 +68,18 @@
         <label for="kategorija">Izaberi kategoriju:</label>
         <select name="kategorija" id="kategorija">
             <option value="">Sve kategorije</option>
-            <option value="Meso">Meso</option>
-            <option value="Dezerti">Dezerti</option>
-            <option value="Pasta">Pasta</option>
-            <option value="Testo">Testo</option>
-            <option value="Piće">Piće</option>
-            <option value="Riba">Riba</option>
-            <option value="Salate">Salate</option>
-            <option value="Grickalice">Grickalice</option>
-            <option value="Sosevi">Sosevi</option>
-            <option value="Kuvano">Kuvano</option>
+            <?php
+            // Povezivanje sa bazom i dobijanje kategorija
+            require_once 'klase/PretragaRecepata.php';
+            $baza = new PretragaRecepata();
+            $kategorije = $baza->izvuciKategorije();
+
+            if ($kategorije) {
+                while ($row = $kategorije->fetch_assoc()) {
+                    echo "<option value='" . htmlspecialchars($row['naziv']) . "'>" . htmlspecialchars($row['naziv']) . "</option>";
+                }
+            }
+            ?>
         </select>
 
         <button type="submit">Pretraga</button>
@@ -89,96 +90,48 @@
 <!-- PHP povezuje se sa bazom da prikaze rezultate -->
 
 <div id="searchResults">
-    <?php
-    // Klasa za rad sa bazom podataka
-    class BazaPodataka {
-        private $conn;
+<?php
+session_start();
 
-        public function __construct($servername, $username, $password, $dbname) {
-            $this->conn = new mysqli($servername, $username, $password, $dbname);
-            if ($this->conn->connect_error) {
-                die("Veza neuspešna: " . $this->conn->connect_error);
-            }
+require_once 'klase/PretragaRecepata.php'; // UKLJUCUJE SE PRETRAGA RECEPATA
+
+// Kreiranje instance pretrage recepata
+$baza = new PretragaRecepata();
+
+if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET['search'])) {
+    $searchTerm = $_GET['search'];
+    $filter = isset($_GET['vegan']) ? 'Vegan' : (isset($_GET['vegeterijanac']) ? 'Vegeterijanac' : 'Sve');
+    $kategorija = $_GET['kategorija'] ?? '';
+
+    // Pozivanje metode za pretragu recepata
+    $result = $baza->pretraziRecepte($searchTerm, $filter, $kategorija);
+
+    if ($result && $result->num_rows > 0) {
+        echo "<br><br>";
+        echo "<table border='1' cellpadding='5' cellspacing='0'>";
+        echo "<tr><th>Ime</th><th>Opis</th><th>Instrukcije</th><th>Dijetalna restrikcija</th><th>Kategorija</th><th>Štampaj recept</th></tr>";
+
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td><a href='#' class='recipe-link' data-ime='" . htmlspecialchars($row['ime']) . "' data-opis='" . htmlspecialchars($row['opis']) . "' data-instrukcije='" . htmlspecialchars($row['instrukcije']) . "'>";
+            echo htmlspecialchars($row['ime']) . "</a></td>";
+            echo "<td>" . htmlspecialchars($row['opis']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['instrukcije']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['dijeta']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['kategorija']) . "</td>";
+            echo "<td><a href='printer-friendly.php?ime=" . urlencode($row['ime']) . "' target='_blank'>Štampaj</a></td>";
+            echo "</tr>";
         }
 
-        public function getConnection() {
-            return $this->conn;
-        }
-
-        public function __destruct() {
-            $this->conn->close();
-        }
+        echo "</table>";
+    } else {
+        echo "<p>Nema rezultata za upit: " . htmlspecialchars($searchTerm) . "</p>";
     }
+}
+?>
 
-    // Klasa za pretragu recepata koja nasledjuje BazaPodataka
-    class PretragaRecepata extends BazaPodataka {
-        public function __construct($servername, $username, $password, $dbname) {
-            parent::__construct($servername, $username, $password, $dbname);
-        }
-
-        public function pretraziRecepte($searchTerm, $filter, $kategorija) {
-            $conn = $this->getConnection();
-            $sql = "SELECT * FROM view_recepti WHERE ime LIKE ?";
-            $params = ["%$searchTerm%"];
-            $types = "s";
-
-            if ($filter === 'Vegan') {
-                $sql .= " AND dijeta = 'Vegan'";
-            } elseif ($filter === 'Vegeterijanac') {
-                $sql .= " AND dijeta = 'Vegeterijanac'";
-            }
-
-            if (!empty($kategorija)) {
-                $sql .= " AND kategorija = ?";
-                $params[] = $kategorija;
-                $types .= "s";
-            }
-
-            $stmt = $conn->prepare($sql);
-            if ($stmt === false) {
-                die("Greška sa pripremom upita: " . $conn->error);
-            }
-
-            $stmt->bind_param($types, ...$params);
-            $stmt->execute();
-            return $stmt->get_result();
-        }
-    }
-
-    // Povezivanje sa bazom
-    $baza = new PretragaRecepata("localhost", "root", "root", "sajt_baza");
-
-    if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search'])) {
-        $searchTerm = $_GET['search'];
-        $filter = isset($_GET['vegan']) ? 'Vegan' : (isset($_GET['vegeterijanac']) ? 'Vegeterijanac' : 'Sve');
-        $kategorija = $_GET['kategorija'] ?? '';
-
-        $result = $baza->pretraziRecepte($searchTerm, $filter, $kategorija);
-
-        if ($result->num_rows > 0) {
-            echo "<br><br>";
-            echo "<table border='1' cellpadding='5' cellspacing='0'>";
-            echo "<tr><th>Ime</th><th>Opis</th><th>Instrukcije</th><th>Dijetalna restrikcija</th><th>Kategorija</th><th>Štampaj recept</th></tr>";
-
-            while ($row = $result->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td><a href='#' class='recipe-link' data-ime='" . htmlspecialchars($row['ime']) . "' data-opis='" . htmlspecialchars($row['opis']) . "' data-instrukcije='" . htmlspecialchars($row['instrukcije']) . "'>";
-                echo htmlspecialchars($row['ime']) . "</a></td>";
-                echo "<td>" . htmlspecialchars($row['opis']) . "</td>";
-                echo "<td>" . htmlspecialchars($row['instrukcije']) . "</td>";
-                echo "<td>" . htmlspecialchars($row['dijeta']) . "</td>";
-                echo "<td>" . htmlspecialchars($row['kategorija']) . "</td>";
-                echo "<td><a href='printer-friendly.php?ime=" . urlencode($row['ime']) . "' target='_blank'>Štampaj</a></td>"; // Link za štampanje
-                echo "</tr>";
-            }
-
-            echo "</table>";
-        } else {
-            echo "<p>Nema rezultata za upit: " . htmlspecialchars($searchTerm) . "</p>";
-        }
-    }
-    ?>
 </div>
+
 
 
 
@@ -196,57 +149,7 @@
 
 <br><br><br><br> <hr class="separator">
 
-
-
- <!-- ====================================================================================================
-
- Galerija kategorija
-
-  ========================================================================================================= -->
   
-<div class="galerija">
-  <a href="link-to-meso-category.html" class="galerija-slika mala tilt-levo">
-    <img src="slike/mesoKategorija.webp" alt="Meso">
-    <div class="ime-kategorije">Meso</div>
-  </a>
-  <a href="link-to-dezerti-category.html" class="galerija-slika velika tilt-desno">
-    <img src="slike/dezertiKategorija.webp" alt="Dezerti">
-    <div class="ime-kategorije">Dezerti</div>
-  </a>
-  <a href="link-to-pasta-category.html" class="galerija-slika srednja">
-    <img src="slike/pastaKategorija.webp" alt="Pasta">
-    <div class="ime-kategorije">Pasta</div>
-  </a>
-  <a href="link-to-testo-category.html" class="galerija-slika default tilt-levo">
-    <img src="slike/testoKategorija.webp" alt="Testo">
-    <div class="ime-kategorije">Testo</div>
-  </a>
-  <a href="link-to-pice-category.html" class="galerija-slika mala">
-    <img src="slike/piceKategorija.webp" alt="Piće">
-    <div class="ime-kategorije">Piće</div>
-  </a>
-  <a href="link-to-riba-category.html" class="galerija-slika velika tilt-desno">
-    <img src="slike/ribaKategorija.webp" alt="Riba i Morski Plodovi">
-    <div class="ime-kategorije">Riba i Morski Plodovi</div>
-  </a>
-  <a href="link-to-salata-category.html" class="galerija-slika srednja">
-    <img src="slike/salataKategorija.webp" alt="Voće i Povrće">
-    <div class="ime-kategorije">Voće i Povrće</div>
-  </a>
-  <a href="link-to-grickalice-category.html" class="galerija-slika default tilt-levo">
-    <img src="slike/grickaliceKategorija.webp" alt="Grickalice">
-    <div class="ime-kategorije">Grickalice</div>
-  </a>
-  <a href="link-to-sos-category.html" class="galerija-slika mala tilt-desno">
-    <img src="slike/sosKategorija.webp" alt="Sosevi">
-    <div class="ime-kategorije">Sosevi</div>
-  </a>
-</div>
-
-        
-        
-        
-        
 
     </main>
   
@@ -263,7 +166,6 @@
             <div class="footer-linkovi">
               <a href="index.php">POČETNA</a>
               <a href="recepti.php">RECEPTI</a>
-              <a href="kontakt.php">INFO</a>
             </div>
           </div>
           <div class="footer-info">

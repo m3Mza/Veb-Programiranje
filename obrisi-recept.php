@@ -1,88 +1,41 @@
 <?php
-session_start(); // Start the session
+session_start();
 
-// Provera da li je korisnik ulogovan
 if (!isset($_SESSION['username'])) {
     header("Location: login.html");
     exit();
 }
 
-// Klasa za rad sa bazom podataka
-class BazaPodataka {
-    private $conn;
+require_once 'klase/Recept.php'; // Uključi klasu Recept
 
-    public function __construct($servername, $username, $password, $dbname) {
-        $this->conn = new mysqli($servername, $username, $password, $dbname);
+// Kreira instancu klase Recept
+$recept = new Recept();
 
-        if ($this->conn->connect_error) {
-            die("Veza neuspešna: " . $this->conn->connect_error);
-        }
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+    $id = intval($_POST['id']); // Uzima ID recepta
+    $napravio = $_SESSION['username']; // Korisničko ime iz sesije
 
-    public function getConnection() {
-        return $this->conn;
-    }
+    echo "ID: " . $id . ", Napravio: " . $napravio . "<br>"; // Debug poruka
 
-    public function __destruct() {
-        $this->conn->close();
-    }
-}
-
-// Klasa za rad sa receptima
-class Recept {
-    private $db;
-
-    public function __construct($db) {
-        $this->db = $db;
-    }
-
-    // Funkcija za brisanje recepta po ID-u
-    public function obrisiRecept($id, $imeAutora) {
-        $sql = "DELETE FROM recepti WHERE id = ? AND napravio = ?";
-        $stmt = $this->db->getConnection()->prepare($sql);
-        
-        if ($stmt) {
-            $stmt->bind_param("is", $id, $imeAutora);
-            $stmt->execute();
-            $stmt->close();
-
-            if ($stmt->affected_rows > 0) {
-                return true;
+    try {
+        // Proveri da li recept postoji
+        if ($recept->receptPostoji($id, $napravio)) {
+            // Poziva metodu za brisanje recepta
+            if ($recept->obrisiRecept($id, $napravio)) {
+                echo "Recept je uspešno obrisan.";
             } else {
-                return false;
+                echo "Recept nije pronađen ili nije obrisan.";
             }
         } else {
-            return false;
+            echo "Recept sa ID: $id ne postoji ili ne pripada korisniku $napravio.";
         }
-    }
-}
-
-// Povezivanje sa bazom
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "sajt_baza";
-$baza = new BazaPodataka($servername, $username, $password, $dbname);
-$recept = new Recept($baza);
-
-// Provera da li je prosleđen ID recepta za brisanje
-if (isset($_GET['id'])) {
-    $receptId = intval($_GET['id']);
-    $imeAutora = $_SESSION['username'];
-
-    // Pokušaj brisanja recepta
-    if ($recept->obrisiRecept($receptId, $imeAutora)) {
-        // Uspešno brisanje, redirekcija na stranicu sa receptima korisnika
-        header("Location: kreator-recepata.php?poruka=uspesno_brisanje");
-        exit();
-    } else {
-        // Greška prilikom brisanja
-        header("Location: kreator-recepata.php?poruka=greska_brisanja");
-        exit();
+    } catch (Exception $e) {
+        echo "Došlo je do greške: " . $e->getMessage();
+    } finally {
+        // Zatvara konekciju sa bazom
+        $recept->zatvoriKonekciju();
     }
 } else {
-    // Ako ID nije prosleđen, redirekcija na glavnu stranicu sa greškom
-    header("Location: kreator-recepata.php?poruka=nepostojeci_id");
-    exit();
+    echo "Nisu poslati validni podaci.";
 }
 ?>

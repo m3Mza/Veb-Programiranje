@@ -1,31 +1,13 @@
 <?php
+require_once 'klase/BazaPodataka.php'; // Uključivanje fajla sa klasom BazaPodataka
+
 // Povezivanje sa bazom podataka
-class BazaPodataka {
-    private $conn;
-
-    public function __construct($servername, $username, $password, $dbname) {
-        $this->conn = new mysqli($servername, $username, $password, $dbname);
-        if ($this->conn->connect_error) {
-            die("Veza neuspešna: " . $this->conn->connect_error);
-        }
-    }
-
-    public function getConnection() {
-        return $this->conn;
-    }
-
-    public function __destruct() {
-        $this->conn->close();
-    }
-}
-
-// Povezivanje sa bazom
-$baza = new BazaPodataka("localhost", "root", "root", "sajt_baza");
+$baza = new BazaPodataka();
 
 $imeRecepta = $_GET['ime'] ?? '';
 
 if ($imeRecepta) {
-    $conn = $baza->getConnection();
+    $conn = $baza->dohvatiKonekciju();
     $sql = "SELECT * FROM recepti WHERE ime = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $imeRecepta);

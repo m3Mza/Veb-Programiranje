@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Sep 17, 2024 at 12:53 PM
+-- Generation Time: Sep 21, 2024 at 05:47 PM
 -- Server version: 5.7.39
 -- PHP Version: 7.4.33
 
@@ -110,6 +110,7 @@ CREATE TABLE `kategorije_recepata` (
 INSERT INTO `kategorije_recepata` (`recept_id`, `kategorija_id`) VALUES
 (14, 1),
 (13, 3),
+(16, 4),
 (7, 10);
 
 -- --------------------------------------------------------
@@ -129,7 +130,7 @@ CREATE TABLE `korisnici` (
 --
 
 INSERT INTO `korisnici` (`id`, `korisnicko_ime`, `lozinka`) VALUES
-(9, 'Mirko', '12345'),
+(9, 'Mirko', '1234567'),
 (10, 'TestZaNasledjivanje', 'registracija');
 
 -- --------------------------------------------------------
@@ -155,7 +156,9 @@ CREATE TABLE `recepti` (
 INSERT INTO `recepti` (`id`, `ime`, `opis`, `kategorija`, `dijeta`, `instrukcije`, `napravio`) VALUES
 (7, 'Natašina čorba od krompira i jaja', 'Lagana čorbica', 'Kuvano', 'Vegeterijanac', 'Skuvati jaja u zasebnoj vodi, oguliti. U drugu vodu skuvati krompir, vratiti jaja, sipati vegetu i pasirani paradajz, dokuvati još malko', 'Mirko'),
 (13, 'Test za kategoriju', '123124', 'Pasta', 'Vegeterijanac', '21512351', 'Mirko'),
-(14, 'T Bone Biftek', 'Biftek', 'Meso', '', 'Biftek sa malo belog luka i ruzmarina peci na tiganju, okretati povremeno dok ne dobije koricu', 'Mirko');
+(14, 'T Bone Biftek', 'Biftek', 'Meso', '', 'Biftek sa malo belog luka i ruzmarina peci na tiganju, okretati povremeno dok ne dobije koricu', 'Mirko'),
+(16, 'TEST IZMENE RECEPTA', 'Test sluzi i za testiranje vidljvosti recepta na drugim nalozima', 'Testo', 'Vegan', 'OPIS NAKON IZMENE RECEPTA', 'TestZaNasledjivanje'),
+(18, 'Recept bez procedure', 'recept kreiran bez upotrebe procedure', 'Meso', 'Vegan', 'asdasfgasf', 'Mirko');
 
 -- --------------------------------------------------------
 
@@ -253,7 +256,7 @@ ALTER TABLE `korisnici`
 -- AUTO_INCREMENT for table `recepti`
 --
 ALTER TABLE `recepti`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Constraints for dumped tables

@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start the session
+session_start();
 
 // Provera da li je korisnik ulogovan
 if (!isset($_SESSION['username'])) {
@@ -7,64 +7,15 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Klasa za rad sa bazom podataka
-class BazaPodataka {
-    private $conn;
+require_once 'klase/Recept.php'; // Uključi klasu Recept
 
-    public function __construct($servername, $username, $password, $dbname) {
-        $this->conn = new mysqli($servername, $username, $password, $dbname);
-        if ($this->conn->connect_error) {
-            die("Veza neuspešna: " . $this->conn->connect_error);
-        }
-    }
+// Kreira instancu klase Recept
+$recept = new Recept();
 
-    public function getConnection() {
-        return $this->conn;
-    }
-
-    public function __destruct() {
-        $this->conn->close();
-    }
-}
-
-// Klasa za rad sa receptima
-class Recept {
-    private $db;
-
-    public function __construct($db) {
-        $this->db = $db;
-    }
-
-    // Dohvati recept po ID-u
-    public function dohvatiRecept($id, $autor) {
-        $sql = "SELECT * FROM recepti WHERE id = ? AND napravio = ?";
-        $stmt = $this->db->getConnection()->prepare($sql);
-        $stmt->bind_param("is", $id, $autor);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
-    }
-
-    // Ažuriraj recept
-    public function azurirajRecept($id, $ime, $opis, $instrukcije, $kategorija, $dijeta) {
-        $sql = "UPDATE recepti SET ime = ?, opis = ?, instrukcije = ?, kategorija = ?, dijeta = ? WHERE id = ?";
-        $stmt = $this->db->getConnection()->prepare($sql);
-        $stmt->bind_param("sssssi", $ime, $opis, $instrukcije, $kategorija, $dijeta, $id);
-        return $stmt->execute();
-    }
-}
-
-// Povezivanje sa bazom
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "sajt_baza";
-$baza = new BazaPodataka($servername, $username, $password, $dbname);
-$recept = new Recept($baza);
-
-// Uzimanje korisničkog imena iz sesije
+// uzima korisnicko ime
 $napravio = $_SESSION['username'];
 
-// Provera da li je prosleđen ID recepta
+// hvata recept id
 if (isset($_GET['id'])) {
     $receptId = intval($_GET['id']);
     $detaljiRecepta = $recept->dohvatiRecept($receptId, $napravio);
@@ -86,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     }
 }
 
+// Novi prozor sa formom
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,34 +47,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     <title>Izmeni Recept</title>
     <link rel="stylesheet" href="forme.css">
     <link rel="stylesheet" href="styles.css">
-    
 </head>
 <body>
 
 <!-- Forma za izmenu recepta -->
 <div class="recipe-form-section">
-    <br>
     <h2 style="text-align: left; margin-left: 15%;">Izmena recepta</h2>
-<br><br>
-<hr class="separator">
-<br><br>
-    <br><br><br>
+    <hr class="separator">
+
     <?php if (isset($error)) { echo "<p class='error'>$error</p>"; } ?>
+    
     <form action="" method="POST" align="center">
-        <input type="hidden" name="id" value="<?php echo $detaljiRecepta['id']; ?>">
+        <input type="hidden" name="id" value="<?php echo htmlspecialchars($detaljiRecepta['id']); ?>">
         
         <label for="ime">Ime:</label>
         <input type="text" id="ime" name="ime" value="<?php echo htmlspecialchars($detaljiRecepta['ime']); ?>" required>
-        <br><br>
-
+        
         <label for="opis">Opis:</label>
         <textarea id="opis" name="opis" required><?php echo htmlspecialchars($detaljiRecepta['opis']); ?></textarea>
-        <br><br>
-
+        
         <label for="instrukcije">Instrukcije:</label>
         <textarea id="instrukcije" name="instrukcije" required><?php echo htmlspecialchars($detaljiRecepta['instrukcije']); ?></textarea>
-        <br><br>
-
+        
         <label for="kategorija">Kategorija:</label>
         <select id="kategorija" name="kategorija" required>
             <option value="Meso" <?php echo ($detaljiRecepta['kategorija'] == 'Meso') ? 'selected' : ''; ?>>Meso</option>
@@ -137,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
             <option value="Sosevi" <?php echo ($detaljiRecepta['kategorija'] == 'Sosevi') ? 'selected' : ''; ?>>Sosevi</option>
             <option value="Kuvano" <?php echo ($detaljiRecepta['kategorija'] == 'Kuvano') ? 'selected' : ''; ?>>Čorbe i Kuvano</option>
         </select>
-        <br><br>
 
         <label>Ograničenje ishrane:</label>
         <div>
@@ -150,12 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
             <input type="radio" id="vegeterijanac" name="dijeta" value="Vegeterijanac" <?php echo ($detaljiRecepta['dijetalna_restrikcija'] == 'Vegeterijanac') ? 'checked' : ''; ?>>
             <label for="vegeterijanac">Vegeterijanac</label>
         </div>
-        <br><br>
 
         <button type="submit">Izmeni Recept</button>
     </form>
 </div>
-
 
 </body>
 </html>

@@ -32,7 +32,6 @@
               <ul>
                   <li><a href="index.php">POČETNA</a></li>
                   <li><a href="recepti.php">RECEPTI</a></li>
-                  <li><a href="kontakt.php">INFO</a></li>
                   <li><a href="login.html">PRIJAVA</a></li>
               </ul>
           </nav>
@@ -138,7 +137,6 @@ Slajder
             <div class="footer-linkovi">
               <a href="index.php">POČETNA</a>
               <a href="recepti.php">RECEPTI</a>
-              <a href="kontakt.php">INFO</a>
             </div>
           </div>
           <div class="footer-info">
